@@ -14,6 +14,7 @@ const String mobile = "MobileNet";
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
 const String deeplab = "DeepLab";
+String str = "";
 
 class App extends StatelessWidget {
   @override
@@ -310,6 +311,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     if (_model == mobile) {
+
       stackChildren.add(Center(
         child: Column(
           children: _recognitions != null
@@ -348,21 +350,18 @@ class _MyAppState extends State<MyApp> {
             itemBuilder: (context) {
               List<PopupMenuEntry<String>> menuEntries = [
                 const PopupMenuItem<String>(
-                  child: Text(mobile),
+                  child: Text('기본'),
                   value: mobile,
                 ),
                 const PopupMenuItem<String>(
-                  child: Text(ssd),
+                  child: Text('전체대상'),
                   value: ssd,
                 ),
                 const PopupMenuItem<String>(
-                  child: Text(yolo),
+                  child: Text('단일대상'),
                   value: yolo,
                 ),
-                const PopupMenuItem<String>(
-                  child: Text(deeplab),
-                  value: deeplab,
-                )
+
               ];
               return menuEntries;
             },
