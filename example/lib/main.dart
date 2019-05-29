@@ -7,14 +7,23 @@ import 'package:image/image.dart' as img;
 
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tflite_example/speak.dart';
 
-void main() => runApp(new App());
-
+//void main() => runApp(new App());
+void main(){
+  runApp(new MaterialApp(
+    home: new App(),
+    routes:<String, WidgetBuilder>{
+      "/SpeakApp" : (BuildContext context) => new SpeakApp()
+    }
+  ));
+}
 const String mobile = "MobileNet";
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
 const String deeplab = "DeepLab";
 String str = "";
+double num = 0;
 
 class App extends StatelessWidget {
   @override
@@ -24,8 +33,10 @@ class App extends StatelessWidget {
         primaryColor: Colors.orangeAccent,
       ),
       home: MyApp(),
+
     );
   }
+
 }
 
 class MyApp extends StatefulWidget {
@@ -217,6 +228,8 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _recognitions = recognitions;
     });
+
+
   }
 
   Future segmentMobileNet(File image) async {
@@ -226,12 +239,16 @@ class _MyAppState extends State<MyApp> {
       imageStd: 127.5,
     );
 
+
     setState(() {
       _recognitions = recognitions;
     });
+
+
   }
 
   onSelect(model) async {
+
     setState(() {
       _busy = true;
       _model = model;
@@ -255,6 +272,19 @@ class _MyAppState extends State<MyApp> {
     double factorY = _imageHeight / _imageWidth * screen.width;
     Color blue = Color.fromRGBO(37, 213, 253, 1.0);
     return _recognitions.map((re) {
+      num = re["confidenceInClass"] * 100;
+
+      str = re["detectedClass"];
+        //print(max);
+     /*int max = 0;
+      if(max < re["confidenceInClass"] * 100)
+        {
+          max = re["confidenceInClass"] *100;
+          str = re["detectedClass"];
+          print(max);
+          print(str);
+        }*/
+
       return Positioned(
         left: re["rect"]["x"] * factorX,
         top: re["rect"]["y"] * factorY,
@@ -278,7 +308,9 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       );
+
     }).toList();
+
   }
 
   @override
@@ -316,6 +348,7 @@ class _MyAppState extends State<MyApp> {
         child: Column(
           children: _recognitions != null
               ? _recognitions.map((res) {
+                //str = res["label"];
                   return Text(
                     "${res["index"]} - ${res["label"]}: ${res["confidence"].toStringAsFixed(3)}",
                     style: TextStyle(
@@ -328,6 +361,7 @@ class _MyAppState extends State<MyApp> {
               : [],
         ),
       ));
+      //print(str);
     } else if (_model == ssd || _model == yolo) {
       stackChildren.addAll(renderBoxes(size));
     }

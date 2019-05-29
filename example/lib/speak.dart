@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-
+import 'package:tflite_example/main.dart';
 
 class SpeakApp extends StatefulWidget {
   @override
@@ -81,10 +81,10 @@ class _SpeakAppState extends State<SpeakApp> {
     }
   }
 
-  /*Future _stop() async {
+  Future _stop() async {
     var result = await flutterTts.stop();
     if (result == 1) setState(() => ttsState = TtsState.stopped);
-  }*/
+  }
 
   @override
   void dispose() {
@@ -140,6 +140,7 @@ class _SpeakAppState extends State<SpeakApp> {
                 child: Column(children: [
                   inputSection(),
                   btnSection(),
+
 
                   languages != null ? languageDropDownSection() : Text(""),
 
