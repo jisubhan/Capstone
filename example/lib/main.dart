@@ -19,6 +19,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.orangeAccent,
+      ),
       home: MyApp(),
     );
   }
@@ -38,7 +41,7 @@ class _MyAppState extends State<MyApp> {
   bool _busy = false;
 
   Future predictImagePicker() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
     if (image == null) return;
     setState(() {
       _busy = true;
@@ -105,7 +108,7 @@ class _MyAppState extends State<MyApp> {
               model: "assets/deeplabv3_257_mv_gpu.tflite",
               labels: "assets/deeplabv3_257_mv_gpu.txt");
           break;
-        default:
+        case mobile:
           res = await Tflite.loadModel(
             model: "assets/mobilenet_v1_1.0_224.tflite",
             labels: "assets/mobilenet_v1_1.0_224.txt",
@@ -164,7 +167,7 @@ class _MyAppState extends State<MyApp> {
   Future recognizeImageBinary(File image) async {
     var imageBytes = (await rootBundle.load(image.path)).buffer;
     img.Image oriImage = img.decodeJpg(imageBytes.asUint8List());
-    img.Image resizedImage = img.copyResize(oriImage, 224, 224);
+    img.Image resizedImage = img.copyResize(oriImage);
     var recognitions = await Tflite.runModelOnBinary(
       binary: imageToByteListFloat32(resizedImage, 224, 127.5, 127.5),
       numResults: 6,
@@ -337,7 +340,8 @@ class _MyAppState extends State<MyApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('tflite example app'),
+
+
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: onSelect,
@@ -367,12 +371,18 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Stack(
         children: stackChildren,
+
+
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: predictImagePicker,
         tooltip: 'Pick Image',
-        child: Icon(Icons.image),
+        child: Icon(Icons.camera),
+        foregroundColor: Colors.grey,
+        backgroundColor: Colors.white,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
