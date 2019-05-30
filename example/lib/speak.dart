@@ -4,20 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:tflite_example/main.dart';
 
+
 class SpeakApp extends StatefulWidget {
+  File simage;
+  SpeakApp(this.simage);
   @override
-  _SpeakAppState createState() => _SpeakAppState();
+  _SpeakAppState createState() => _SpeakAppState(simage);
 }
 
 enum TtsState { playing, stopped }
 
 class _SpeakAppState extends State<SpeakApp> {
+  _SpeakAppState(this.image);
+  File image;
   FlutterTts flutterTts;
   dynamic languages;
   dynamic voices;
   String language;
   String voice;
-
   String _newVoiceText;
 
   TtsState ttsState = TtsState.stopped;
@@ -81,10 +85,10 @@ class _SpeakAppState extends State<SpeakApp> {
     }
   }
 
-  Future _stop() async {
+  /*Future _stop() async {
     var result = await flutterTts.stop();
     if (result == 1) setState(() => ttsState = TtsState.stopped);
-  }
+  }*/
 
   @override
   void dispose() {
@@ -122,37 +126,48 @@ class _SpeakAppState extends State<SpeakApp> {
     });
   }
 
-  void _onChange(String text) {
+  void _onChange() {
     setState(() {
-      _newVoiceText = text;
+      _newVoiceText = str;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
+    _onChange();
     return MaterialApp(
+        theme: ThemeData(
+          primaryColor: Colors.orangeAccent,
+        ),
         home: Scaffold(
             appBar: AppBar(
-              title: Text('음성송출 모듈'),
+              title: Text('Langur'),
             ),
-            body: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
+            body: Center(
+                //scrollDirection: Axis.vertical,
                 child: Column(children: [
-                  inputSection(),
+                  Image.file(image,width: 150.0,height: 300.0),
+                  Text('인식 단어 : $str',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  //inputSection(),
                   btnSection(),
-
 
                   languages != null ? languageDropDownSection() : Text(""),
 
                 ]))));
   }
 
+
   Widget inputSection() => Container(
       alignment: Alignment.topCenter,
       padding: EdgeInsets.only(top: 25.0, left: 25.0, right: 25.0),
       child: TextField(
         onChanged: (String value) {
-          _onChange(value);
+          value = str;
+          _onChange();
         },
       ));
 

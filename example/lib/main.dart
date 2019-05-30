@@ -13,18 +13,19 @@ import 'package:tflite_example/speak.dart';
 void main(){
   runApp(new MaterialApp(
     home: new App(),
-    routes:<String, WidgetBuilder>{
+    /*routes:<String, WidgetBuilder>{
       "/SpeakApp" : (BuildContext context) => new SpeakApp()
-    }
+    }*/
   ));
 }
+
 const String mobile = "MobileNet";
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
 const String deeplab = "DeepLab";
 String str = "";
 double num = 0;
-
+bool pushed = false;
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,7 @@ class _MyAppState extends State<MyApp> {
     if (image == null) return;
     setState(() {
       _busy = true;
+      pushed = true;
     });
     predictImage(image);
   }
@@ -376,8 +378,6 @@ class _MyAppState extends State<MyApp> {
 
     return Scaffold(
       appBar: AppBar(
-
-
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: onSelect,
@@ -402,19 +402,33 @@ class _MyAppState extends State<MyApp> {
           )
         ],
       ),
-      body: Stack(
-        children: stackChildren,
+      body: new Container(
+        child: new Stack(
+          children: stackChildren,
+        ),
 
 
       ),
 
+
       floatingActionButton: FloatingActionButton(
-        onPressed: predictImagePicker,
+
+        onPressed: (){
+          if(pushed == false) {
+            predictImagePicker();
+            pushed = true;
+          }
+          else{
+            pushed = false;
+            Navigator.push(context, new MaterialPageRoute(
+                builder: (context) => SpeakApp(_image)
+            ));//predictImagePicker,
+          }
+        },
         tooltip: 'Pick Image',
         child: Icon(Icons.camera),
         foregroundColor: Colors.grey,
-        backgroundColor: Colors.white,
-      ),
+        backgroundColor: Colors.white,),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
